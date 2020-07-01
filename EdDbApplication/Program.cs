@@ -7,11 +7,40 @@ using EdDbLib;
 namespace EdDbApplication {
     class Program {
         static void Main() {
-            TestConnection();
+            TestStudentController();
         }
-        static void TestConnection() {
+
+
+        static void TestMajorsController() {
+            var connection = new Connection("localhost", "sqlexpress", "EdDb");//passes to connection constructor
+            var majorsCtrl = new MajorsController(connection);//opens connection
+
+            var majorUBW = majorsCtrl.GetByCode("UBW");
+
+
+            var major = majorsCtrl.GetByPK(5);
+            major.Description = "English";
+            var success = majorsCtrl.Update(major);
+
+            var newMajor = new Major() {
+                Code = "UBW",
+                Description = "Underwater Basket Weaving",
+                MinSAT = 1000,
+            };
+
+            var itWorked = majorsCtrl.Insert(newMajor);
+
+        }
+
+
+
+
+        static void TestStudentController() {
             var connection = new Connection("localhost", "sqlexpress", "EdDb");//user calls shorter constructor. uses connection class
             var studentsCtrl = new StudentsController(connection);//opens connection for controller class
+           
+            
+            
             var newStudent = new Student() {
                 Firstname = "Fred", //passes info into instance of student
                 Lastname = "Flintstone",
@@ -20,25 +49,26 @@ namespace EdDbApplication {
                 GPA = 2.5m,
                 MajorId = null
             };
-            //var itWorked = studentsCtrl.Insert(newStudent); //inserts student into EdDb
+            var itWorked = studentsCtrl.Insert(newStudent, "UBW"); //inserts student into EdDb
 
-            var fred = new Student(61) {
-                Firstname = "Fredrick", 
-                Lastname = "Flintstone",
-                StateCode = "SA",
-                SAT = 1000,
-                GPA = 2.8m,
-                MajorId = null
-            };
-            //var itWorked = studentsCtrl.Update(fred); //commits update
+            //var fred = new Student(61) {
+            //    Firstname = "Fredrick",
+            //    Lastname = "Flintstone",
+            //    StateCode = "SA",
+            //    SAT = 1000,
+            //    GPA = 2.8m,
+            //    MajorId = null
+            //};
+            // var itWorked = studentsCtrl.Update(fred); //commits update
 
-            var itWorked = studentsCtrl.Delete(61);
+            // var itWorked = studentsCtrl.Delete(61);
 
-            var student = studentsCtrl.GetByPK(10);
-            var noStudent = studentsCtrl.GetByPK(-1);
-            var students = studentsCtrl.GetAll();
-            connection.Close();
+            //var student = studentsCtrl.GetByPK(10);
+            //var noStudent = studentsCtrl.GetByPK(-1);
+            //var students = studentsCtrl.GetAll();
+            //connection.Close();
         }
+
         static void Test1() {
 
             var connectionString = @"server=localhost\sqlexpress;database=EdDb;trusted_connection=true;";//connection string
@@ -63,7 +93,7 @@ namespace EdDbApplication {
                 student.SAT = Convert.ToInt32(reader["SAT"]);
                 student.GPA = Convert.ToDecimal(reader["GPA"]);
                 student.MajorId = null;
-                if (!reader["MajorId"] .Equals (DBNull.Value)) { //or reader majorid != dbnull...
+                if (!reader["MajorId"].Equals(DBNull.Value)) { //or reader majorid != dbnull...
                     student.MajorId = Convert.ToInt32(reader["MajorId"]);
                 }
                 students.Add(student); //add information from this student to list of students
