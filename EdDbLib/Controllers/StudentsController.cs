@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 
 namespace EdDbLib {
     /// <summary>
@@ -10,6 +9,18 @@ namespace EdDbLib {
     public class StudentsController : BaseController {
 
         public StudentsController(Connection connection) : base (connection) {
+        }
+
+
+        private SqlCommand CreateAndFillParameters(Student student, string sqlStatement) {
+            var sqlCommand = new SqlCommand(sqlStatement, Connection.sqlConnection);
+            sqlCommand.Parameters.AddWithValue(Student.FIRSTNAME, student.Firstname);
+            sqlCommand.Parameters.AddWithValue(Student.LASTNAME, student.Lastname);
+            sqlCommand.Parameters.AddWithValue(Student.sat, student.SAT);
+            sqlCommand.Parameters.AddWithValue(Student.gpa, student.GPA);
+            sqlCommand.Parameters.AddWithValue(Student.STATECODE, student.StateCode);
+            sqlCommand.Parameters.AddWithValue(Student.MAJORID, student.MajorId);
+            return sqlCommand;
         }
 
         /// <summary>
@@ -30,7 +41,7 @@ namespace EdDbLib {
         /// <param name="Id">Student ID from table</param>
         /// <returns>Exception if no student, true if successful.</returns>
         public bool Delete(int Id) {
-            var sqlStatement = $"DELETE From Student where ID = {Id}";
+            var sqlStatement = Student.DELETE;
             //Creates a new SQL command on this connection and passes the SQL statement
             var sqlCmd = new SqlCommand(sqlStatement, Connection.sqlConnection);
             var rowsAffected = sqlCmd.ExecuteNonQuery();
@@ -45,15 +56,9 @@ namespace EdDbLib {
         /// <param name="student">Must call student by name from table to modify</param>
         /// <returns>Except if afffects > 1 row, true if successful.</returns>
         public bool Update(Student student) {
-            var majorId = (student.MajorId == null) ? "NULL" : $"{student.MajorId}";
-            var sqlStatement = "UPDATE Student Set " +
-                $"Firstname = '{student.Firstname}', " +
-                $"Lastname = '{student.Lastname}', " +
-                $"StateCode = '{student.StateCode}', " +
-                $"SAT = {student.SAT}, " +
-                $"GPA = {student.GPA}, " +
-                $"MajorId = {majorId}" +
-                $"Where Id = {student.Id};";
+            var majorId = (student.MajorId == null) ? "NULL" : Student.MAJORID;
+            var sqlStatement = Student.UPDATE;
+            var sqlCommand = CreateAndFillParameters(student, sqlStatement);
             //Refactored method here creates SQL connection, passes statement, executes, returns rowsAffected.
             int rowsAffected = CreateSqlCommand(sqlStatement);
             return CheckRowsAffected(rowsAffected);
@@ -67,14 +72,8 @@ namespace EdDbLib {
         /// <param name="student">Name of student to be inserted. </param>
         /// <returns>Except if affects > 1 row, true if successful.</returns>
         public bool Insert(Student student) {
-            var majorId = "NULL";
-            if(student.MajorId != null) {
-                majorId = $"{student.MajorId}";
-            }
-            var sqlStatement = "INSERT Student" +
-                "(Firstname, Lastname, StateCode, SAT, GPA, MajorId)" +
-                "VALUES" +
-                $"('{student.Firstname}', '{student.Lastname}', '{student.StateCode}', {student.SAT}, {student.GPA}, {majorId});";
+            var sqlStatement = Student.INSERT;
+            var sqlCommand = CreateAndFillParameters(student, sqlStatement);
             int rowsAffected = CreateSqlCommand(sqlStatement);
             return CheckRowsAffected(rowsAffected);
         }
@@ -103,16 +102,16 @@ namespace EdDbLib {
         /// <param name="reader">SQL command from user's statement</param>
         /// <returns>Student records called by user.</returns>
         private static Student ReadEntireStudent(SqlDataReader reader) {
-            var id = Convert.ToInt32(reader["Id"]);
+            var id = Convert.ToInt32(reader[Student.ID]);
             var student = new Student(id);
-            student.Firstname = reader["FirstName"].ToString();
-            student.Lastname = reader["LastName"].ToString();
-            student.StateCode = reader["StateCode"].ToString();
-            student.SAT = Convert.ToInt32(reader["SAT"]);
-            student.GPA = Convert.ToDecimal(reader["GPA"]);
+            student.Firstname = reader[Student.FIRSTNAME].ToString();
+            student.Lastname = reader[Student.LASTNAME].ToString();
+            student.StateCode = reader[Student.STATECODE].ToString();
+            student.SAT = Convert.ToInt32(reader[Student.sat]);
+            student.GPA = Convert.ToDecimal(reader[Student.gpa]);
             student.MajorId = null;
-            if (!reader["MajorId"].Equals(DBNull.Value)) {
-                student.MajorId = Convert.ToInt32(reader["MajorId"]);
+            if (!reader[Student.MAJORID].Equals(DBNull.Value)) {
+                student.MajorId = Convert.ToInt32(reader[Student.MAJORID]);
             }
 
             return student;
@@ -139,6 +138,7 @@ namespace EdDbLib {
 
 
         }
+
 
         /// <summary>
         /// Allows user to call all students from table.

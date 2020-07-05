@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace EdDbLib {
     /// <summary>
@@ -16,7 +17,33 @@ namespace EdDbLib {
         public int SAT { get; set; }
         public decimal GPA { get; set; }
         public int? MajorId { get; set; }
-        
+
+        /// <summary>
+        /// Constants support students controller, limit number of strings user must pass.
+        /// </summary>
+        public const string ID = "Id";
+        public const string FIRSTNAME = "Firstname";
+        public const string LASTNAME = "Lastname";
+        public const string ISTENURED = "IsTenured";
+        public const string YEARSEXPERIENCE = "YearsExperience";
+        public const string STATECODE = "StateCode";
+        public const string sat = "SAT";
+        public const string gpa = "GPA";
+        public const string MAJORID = "MajorID";
+        public const string DELETE = "DELETE From Student where ID = @Id;";
+        public const string INSERT = "INSERT Instructor" +
+                                        "(Firstname, Lastname, StateCode, SAT, GPA, MajorId) VALUES + "
+                                        "(@Firstname, @Lastname, @StateCode, @SAT, @GPA, @MajorId);";
+        public const string UPDATE = "UPDATE Student Set " +
+                                    "Firstname = @Firstname' " +
+                                    "Lastname = @Lastname, " +
+                                    "StateCode = @StateCode, " +
+                                    "SAT = @SAT, " +
+                                    "GPA = @GPA, " +
+                                    "MajorId = @MajorId" +
+                                    "Where Id = @Id;";
+
+
         public const string SelectByPK = "Select * From Student where ID = {Id}";
         public const string SelectAll = "Select * from Student;";
 

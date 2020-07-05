@@ -14,6 +14,7 @@ namespace EdDbLib {
         
         //install package to talk to sql
         public SqlConnection sqlConnection { get; private set; } = null;
+
         //Makes user connection strings properties of Connection class and creates connection w/ SQL?_________________
         private string connectionString { get; set; } = null;
 

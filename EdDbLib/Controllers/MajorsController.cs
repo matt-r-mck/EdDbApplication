@@ -25,18 +25,22 @@ namespace EdDbLib {
         /// <param name="reader"> Reader initalized by method called by user. </param>
         /// <returns> A major. </returns>
         private Major LoadMajorInstance(SqlDataReader reader) {
-            var id = Convert.ToInt32(reader["Id"]);
+            var id = Convert.ToInt32(reader[Major.ID]);
             var major = new Major(id);
-            major.Code = reader["Code"].ToString();
-            major.Description = reader["Description"].ToString();
-            major.MinSAT = Convert.ToInt32(reader["MinSAT"]);
+            major.Code = reader[Major.CODE].ToString();
+            major.Description = reader[Major.DESCRIPTION].ToString();
+            major.MinSAT = Convert.ToInt32(reader[Major.MINSAT]);
             return major;
         }
 
-
+        /// <summary>
+        /// Allows user to select a Major by code.
+        /// </summary>
+        /// <param name="Code"> User must pass code of Major they are looking for. </param>
+        /// <returns> null if doesn't exist. Major if does. </returns>
         public Major SelectByCode(string Code) {
             var sqlCmd = new SqlCommand(Major.SelectByCode, Connection.sqlConnection);
-            sqlCmd.Parameters.AddWithValue("@Code", Code);
+            sqlCmd.Parameters.AddWithValue(Major.CODE, Code);
             var reader = sqlCmd.ExecuteReader();
             if (!reader.HasRows) {
                 reader.Close();
@@ -89,10 +93,7 @@ namespace EdDbLib {
         /// <param name="major"> User must pass name of new major. </param>
         /// <returns >false if no rows affected, Except if many records, true if worked.</returns>
         public bool Insert(Major major) {
-            var sqlStmt = "INSERT Major " +
-                "(Code, Description, MinSAT)" +
-                " VALUES " +
-                "(@Code, @Description, @MinSAT);";
+            var sqlStmt = Major.INSERT;
             var sqlCmd = CreateCommandFillPerameters(major, sqlStmt);
             var rowsAffected = sqlCmd.ExecuteNonQuery();
             return CheckRowsAffected(rowsAffected);
@@ -104,13 +105,9 @@ namespace EdDbLib {
         /// <param name="major"> User must call major by name. </param>
         /// <returns> false if doesn't exist, Except if many records, true if worked. </returns>
         public bool Update (Major major) {
-            var sqlStmt = "Update Major Set " +
-                "Code = @code, " +
-                "Description = @Description, " +
-                "MinSAT = @MinSAT " +
-                "Where Id = @Id;";
+            var sqlStmt = Major.UPDATE;
             var sqlCmd = CreateCommandFillPerameters(major, sqlStmt);
-            sqlCmd.Parameters.AddWithValue("@Id", major.Id);
+            sqlCmd.Parameters.AddWithValue(Major.ID, major.Id);
             var rowsAffected = sqlCmd.ExecuteNonQuery();
             return CheckRowsAffected(rowsAffected);
             }
@@ -125,23 +122,23 @@ namespace EdDbLib {
         /// <returns> Uniform modification command. </returns>
         private SqlCommand CreateCommandFillPerameters(Major major, string sqlStmt) {
             var sqlCmd = new SqlCommand(sqlStmt, Connection.sqlConnection);
-            sqlCmd.Parameters.AddWithValue("@Code", major.Code);
-            sqlCmd.Parameters.AddWithValue("@Description", major.Description);
-            sqlCmd.Parameters.AddWithValue("@MinSAT", major.MinSAT);
+            sqlCmd.Parameters.AddWithValue(Major.CODE, major.Code);
+            sqlCmd.Parameters.AddWithValue(Major.DESCRIPTION, major.Description);
+            sqlCmd.Parameters.AddWithValue(Major.MINSAT, major.MinSAT);
             return sqlCmd;
         }
+
 
         /// <summary>
         /// deletes a major where the id = PK for major
         /// </summary>
         /// <param name="Id"> PK from table </param>
         /// <returns> true if worked, false if 0 rows affected </returns>
-        public bool Delete (int Id) {
+        public bool DeleteByPK (int Id) {
             var sqlCmd = new SqlCommand(Major.DeleteMajorByID, Connection.sqlConnection);
-            sqlCmd.Parameters.AddWithValue("@Id", Id);
+            sqlCmd.Parameters.AddWithValue(Major.ID, Id);
             try {
                 int rowsAffected = sqlCmd.ExecuteNonQuery();
-                //need to catch a refintegrity exception if user deletes != 1 row.
                 return CheckRowsAffected(rowsAffected);
             } catch (SqlException ex) {
                 var refIntEx = new Exceptions.ReferentialIntegrityException

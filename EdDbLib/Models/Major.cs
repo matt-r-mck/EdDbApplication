@@ -18,6 +18,18 @@ namespace EdDbLib {
         public const string SelectByPK = "SELECT * From Major WHERE ID ={Id};";
         public const string DeleteMajorByID = "DELETE from Major where ID = @Id;";
         public const string SelectByCode = "SELECT * From Major WHERE Code = @Code;";
+        public const string CODE = "Code";
+        public const string ID = "Id";
+        public const string DESCRIPTION = "Description";
+        public const string MINSAT = "MinSAT";
+
+        public const string INSERT = "INSERT Major (Code, Description, MinSAT) VALUES " +
+                                    "(@Code, @Description, @MinSAT);";
+        public const string UPDATE = "Update Major Set " +
+                                    "Code = @code, " +
+                                    "Description = @Description, " +
+                                    "MinSAT = @MinSAT " +
+                                    "Where Id = @Id;";
 
         //ID can be called, set to 0 to prevent conflicts with the table.
         public int Id { get; private set; } = 0;

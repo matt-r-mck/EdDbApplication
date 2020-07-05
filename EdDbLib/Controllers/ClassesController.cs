@@ -20,23 +20,23 @@ namespace EdDbLib {
         /// <param name="reader"> Reader initalized by method called by user. </param>
         /// <returns> Class instance </returns>
         private Class LoadClassInstance(SqlDataReader reader) {
-            var id = Convert.ToInt32(reader["Id"]);
+            var id = Convert.ToInt32(reader[Class.ID]);
             var ccllaass = new Class(id);
-            ccllaass.Code = reader["Code"].ToString();
-            ccllaass.Subject = reader["Subject"].ToString();
-            ccllaass.Section = Convert.ToInt32(reader["Subject"]);
+            ccllaass.Code = reader[Class.CODE].ToString();
+            ccllaass.Subject = reader[Class.SUBJECT].ToString();
+            ccllaass.Section = Convert.ToInt32(reader[Class.SECTION]);
             ccllaass.InstructorID = null;
-            if (!reader["InstructorID"].Equals(DBNull.Value)) {
-                ccllaass.InstructorID = Convert.ToInt32(reader["InstructorID"]);
+            if (!reader[Class.INSTRUCTORID].Equals(DBNull.Value)) {
+                ccllaass.InstructorID = Convert.ToInt32(reader[Class.INSTRUCTORID]);
             }
             return ccllaass;            
         }
-        
+
         public IEnumerable<Class> SelectAll() {
             var sqlCmd = new SqlCommand(Class.SelectAll, Connection.sqlConnection);
             var reader = sqlCmd.ExecuteReader();
             var classes = new List<Class>();
-            while(reader.Read()){
+            while (reader.Read()) {
                 var ccllaass = LoadClassInstance(reader);
                 classes.Add(ccllaass);
             }
@@ -46,7 +46,7 @@ namespace EdDbLib {
 
         public Class SelectByPK(int Id) {
             var sqlCmd = new SqlCommand(Class.SelectByPK, Connection.sqlConnection);
-            sqlCmd.Parameters.AddWithValue("@Id", Id);
+            sqlCmd.Parameters.AddWithValue(Class.ID, Id);
             var reader = sqlCmd.ExecuteReader();
             if (!reader.HasRows) {
                 reader.Close();
@@ -60,7 +60,7 @@ namespace EdDbLib {
 
         public Class SelectByCode(string Code) {
             var sqlCmd = new SqlCommand(Class.SelectByCode, Connection.sqlConnection);
-            sqlCmd.Parameters.AddWithValue("@Code", Code);
+            sqlCmd.Parameters.AddWithValue(Class.CODE, Code);
             var reader = sqlCmd.ExecuteReader();
             if (!reader.HasRows) {
                 reader.Close();
@@ -73,7 +73,7 @@ namespace EdDbLib {
         }
 
         public bool Delete(int id) {
-            var sqlStmt = $"Delete from Class where ID = {id}";
+            var sqlStmt = Class.DELETE;
             var sqlCmd = new SqlCommand(sqlStmt, Connection.sqlConnection);
             try {
                 var rowsAffected = sqlCmd.ExecuteNonQuery();
@@ -97,21 +97,14 @@ namespace EdDbLib {
 
         public bool Insert(Class ccllaass) {
             var instructorId = (ccllaass.InstructorID == null) ? "NULL" :  $"{ccllaass.InstructorID}";
-            var sqlStmt = "INSERT Class " +
-                "(Code, Subject, Section, InstructorId) VALUES " +
-                $"('{ccllaass.Code}', '{ccllaass.Subject}', '{ccllaass.Section}', {instructorId}";
+            var sqlStmt = Class.INSERT;
             int rowsAffected = CreateSqlCommand(sqlStmt);
             return CheckRowsAffected(rowsAffected);
         }
 
         public bool Update (Class ccllaass) {
             var instructorId = (ccllaass.InstructorID == null) ? "NULL" : $"{ccllaass.InstructorID}";
-            var sqlStmt = "UPDATE Student SET " +
-                $"Code = '{ccllaass.Code}', " +
-                $"Subject = '{ccllaass.Subject}', " +
-                $"Section = '{ccllaass.Section}', " +
-                $"InstructorId = {instructorId}, " +
-                $"WHERE Id = {ccllaass.Id};";
+            var sqlStmt = Class.UPDATE;
             int rowsAffected = CreateSqlCommand(sqlStmt);
             return CheckRowsAffected(rowsAffected);
         }
