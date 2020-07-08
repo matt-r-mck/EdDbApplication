@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Xml.XPath;
 
 namespace EdDbLib {
     /// <summary>
@@ -8,7 +11,7 @@ namespace EdDbLib {
     /// </summary>
     public class StudentsController : BaseController {
 
-        public StudentsController(Connection connection) : base (connection) {
+        public StudentsController(Connection connection) : base(connection) {
         }
 
 
@@ -112,8 +115,8 @@ namespace EdDbLib {
             student.MajorId = null;
             if (!reader[Student.MAJORID].Equals(DBNull.Value)) {
                 student.MajorId = Convert.ToInt32(reader[Student.MAJORID]);
+                
             }
-
             return student;
         }
 
@@ -145,17 +148,60 @@ namespace EdDbLib {
         /// </summary>
         /// <returns>List of all students from student table</returns>
         public IEnumerable<Student> SelectAll() {
-            SqlCommand sqlCommand = new SqlCommand(Student.SelectAll, Connection.sqlConnection);
+            var sqlCommand = new SqlCommand(Student.SelectAll, Connection.sqlConnection);
             var reader = sqlCommand.ExecuteReader();
-            var students = new List<Student>(); 
-            while (reader.Read()) {
-                ReadEntireStudent(reader);
-            }
-            reader.Close();
-            return students;
+            var students = new List<Student>();
+                while (reader.Read()) {
+                    var student = ReadEntireStudent(reader);
+                    students.Add(student);
+                }
+                reader.Close();
+                return students;
+        }
+
+        public IEnumerable<Student> GetByLastName(string startstWith) {
+            var students = SelectAll();
+            var result = from s in students
+                         where s.Lastname.StartsWith(startstWith)
+                         orderby s.Lastname
+                         select s;
+            return result;
         }
 
 
+        public struct StudentsPerState {
+            public string StateCode { get; set; }
+            public int Count { get; set; }
+        }
 
+
+        public IEnumerable<StudentsPerState> GetStudentsPerState() {
+
+            var studentsPerState = from s in SelectAll()
+                                   group s by s.StateCode into sc
+                                   select new StudentsPerState {
+                                       StateCode = sc.Key, Count = sc.Count()
+                                   };
+            return studentsPerState;
+        }
+
+        public struct StudentWithMajor {
+            public int Id { get; set; }
+            public string Fullname { get; set; }
+            public string Major { get; set; }
+        }
+
+        public IEnumerable<StudentWithMajor> GetStudentWithMajor() {
+            var majCtrl = new MajorsController(Connection);
+            var studentWithMajor = from s in SelectAll()
+                                   join m in majCtrl.SelectAll()
+                                   on s.MajorId equals m.Id into sm
+                                   from s2 in sm.DefaultIfEmpty()
+                                   select new StudentWithMajor {
+                                       Id = s.Id, Fullname = $"{s.Firstname} {s.Lastname}", Major = s2?.Description ?? "Undeclared"
+                                   };
+            return studentWithMajor;
+
+        }
     }
 }

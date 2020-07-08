@@ -7,9 +7,6 @@ using System.Data;
 using System.Security.Cryptography.X509Certificates;
 
 namespace EdDbLib {
-    /// <summary>
-    /// 
-    /// </summary>
     public class Connection {
         
         //install package to talk to sql

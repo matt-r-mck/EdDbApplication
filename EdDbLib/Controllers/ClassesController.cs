@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
 using System.Text;
+using System.Linq;
 
 namespace EdDbLib {
     /// <summary>
     /// Controller allows user to call from and modify class table
     /// </summary>
-    class ClassesController : BaseController {
+    public class ClassesController : BaseController {
 
 
         public ClassesController(Connection connection): base (connection) {
@@ -25,9 +26,9 @@ namespace EdDbLib {
             ccllaass.Code = reader[Class.CODE].ToString();
             ccllaass.Subject = reader[Class.SUBJECT].ToString();
             ccllaass.Section = Convert.ToInt32(reader[Class.SECTION]);
-            ccllaass.InstructorID = null;
+            ccllaass.InstructorId = null;
             if (!reader[Class.INSTRUCTORID].Equals(DBNull.Value)) {
-                ccllaass.InstructorID = Convert.ToInt32(reader[Class.INSTRUCTORID]);
+                ccllaass.InstructorId = Convert.ToInt32(reader[Class.INSTRUCTORID]);
             }
             return ccllaass;            
         }
@@ -96,20 +97,34 @@ namespace EdDbLib {
         }
 
         public bool Insert(Class ccllaass) {
-            var instructorId = (ccllaass.InstructorID == null) ? "NULL" :  $"{ccllaass.InstructorID}";
+            var instructorId = (ccllaass.InstructorId == null) ? "NULL" :  $"{ccllaass.InstructorId}";
             var sqlStmt = Class.INSERT;
             int rowsAffected = CreateSqlCommand(sqlStmt);
             return CheckRowsAffected(rowsAffected);
         }
 
         public bool Update (Class ccllaass) {
-            var instructorId = (ccllaass.InstructorID == null) ? "NULL" : $"{ccllaass.InstructorID}";
+            var instructorId = (ccllaass.InstructorId == null) ? "NULL" : $"{ccllaass.InstructorId}";
             var sqlStmt = Class.UPDATE;
             int rowsAffected = CreateSqlCommand(sqlStmt);
             return CheckRowsAffected(rowsAffected);
         }
 
+        public class ClassWithInstructor {
+            public Class Class { get; set; }
+            public Instructor Instructor { get; set; }
+        }
 
+        public IEnumerable<ClassWithInstructor> GetClassWithInstructor() {
+            var insCtrl = new InstructorsController(Connection);
+            var classWithInstructor = from c in SelectAll()
+                                      join i in insCtrl.SelectAll()
+                                      on c.InstructorId equals i.Id
+                                      select new ClassWithInstructor {
+                                          Class = c, Instructor = i
+                                      };
+            return classWithInstructor;
+        }
 
     }
 }

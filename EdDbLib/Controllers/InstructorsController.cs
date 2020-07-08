@@ -19,12 +19,12 @@ namespace EdDbLib {
             return rowsAffected;
         }
 
-        private static Instructor ExecuteReader(SqlDataReader reader{
+        private static Instructor ExecuteReader(SqlDataReader reader) { 
             var id = Convert.ToInt32(reader[Instructor.ID]);
             var instructor = new Instructor(id);
             instructor.Firstname = reader[Instructor.FIRSTNAME].ToString();
             instructor.Lastname = reader[Instructor.LASTNAME].ToString();
-            instructor.YearsExperience = (int)reader[Instructor.YEARSEXPERIENCE];
+            instructor.YearsExperience = Convert.ToInt32(reader[Instructor.YEARSEXPERIENCE]);
             instructor.IsTenured = (bool)reader[Instructor.ISTENURED];
             return instructor;
         }

@@ -32,7 +32,7 @@ namespace EdDbLib {
         public const string MAJORID = "MajorID";
         public const string DELETE = "DELETE From Student where ID = @Id;";
         public const string INSERT = "INSERT Instructor" +
-                                        "(Firstname, Lastname, StateCode, SAT, GPA, MajorId) VALUES + "
+                                        "(Firstname, Lastname, StateCode, SAT, GPA, MajorId) VALUES + " +
                                         "(@Firstname, @Lastname, @StateCode, @SAT, @GPA, @MajorId);";
         public const string UPDATE = "UPDATE Student Set " +
                                     "Firstname = @Firstname' " +

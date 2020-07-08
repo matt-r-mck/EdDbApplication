@@ -37,11 +37,8 @@ namespace EdDbLib {
         private string _code = string.Empty;
         public string Code {
             get { return _code; }
-            set {
-                if (value.Length > 4) {
-                    throw new Exception("Code length must be <= 4 characters");
-                } else _code = value;
-            }
+            set { _code = value; }
+            
         }
 
         private string _subject = string.Empty;
@@ -55,7 +52,7 @@ namespace EdDbLib {
         }
 
         public int Section { get; set; }
-        public int? InstructorID { get; set; }
+        public int? InstructorId { get; set; }
 
 
         public Class() : this (0) {}

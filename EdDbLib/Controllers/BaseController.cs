@@ -42,10 +42,10 @@ namespace EdDbLib {
                 {
                     0 => false,
                     1 => true,
-                    _ => throw new Exception($"Method affected {rowsAffected} rows");
+                    _ => throw new Exception($"Method affected {rowsAffected} rows"),
             };
             }
 
         }
-    }
+    
 }
