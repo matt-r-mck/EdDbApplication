@@ -51,7 +51,6 @@ namespace EdDbLib {
             Instructor instructor = ExecuteReader(reader);
             reader.Close();
             return instructor;
-
         }
 
         public bool Delete(int id) {

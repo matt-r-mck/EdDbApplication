@@ -11,7 +11,7 @@ namespace EdDbLib {
     /// </summary>
     public class Class {
 
-
+        //String constants passes into LINQ statements to limit input errors.
         public const string SelectAll = "Select * from Class;";
         public const string SelectByPK = "Select * from Class WHERE ID = @Id;";
         public const string SelectByCode = "Select * from Class Where Code = @Code;";
@@ -31,14 +31,17 @@ namespace EdDbLib {
         public const string SECTION = "Section";
         public const string INSTRUCTORID = "InstructorID";
 
-
+        //Properties
         public int Id { get; private set; } = 0;
         
         private string _code = string.Empty;
         public string Code {
             get { return _code; }
-            set { _code = value; }
-            
+            set {
+                if (value.Length > 4) {
+                    throw new Exception("Code length must be <= 4 characters");
+                }else _code = value; 
+            }
         }
 
         private string _subject = string.Empty;

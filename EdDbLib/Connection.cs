@@ -7,20 +7,26 @@ using System.Data;
 using System.Security.Cryptography.X509Certificates;
 
 namespace EdDbLib {
-    public class Connection {
-        
-        //install package to talk to sql
-        public SqlConnection sqlConnection { get; private set; } = null;
 
-        //Makes user connection strings properties of Connection class and creates connection w/ SQL?_________________
+    /// <summary>
+    /// Stores all connectin info.
+    /// </summary>
+    public class Connection {
+
+        public const string LOCALHOST = "localhost";
+        public const string SQLEXPRESS = "sqlexpress";
+        public const string EDDB = "EdDb";
+
+        //Makes the SQL connection and passed connection string a property of this class.
+        public SqlConnection sqlConnection { get; private set; } = null;
         private string connectionString { get; set; } = null;
 
         /// <summary>
-        /// 
+        /// Connection string constructor.
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="instance"></param>
-        /// <param name="database"></param>
+        /// <param name="server"> Server to connect to. </param>
+        /// <param name="instance"> Current intance of server. </param>
+        /// <param name="database"> Database to be accessed. </param>
          //constructor to establish connection
         public Connection(string server, string instance, string database) {
             //sets string equal to user input

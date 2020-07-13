@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace EdDbLib {
     /// <summary>
-    /// Controller allows user to call from and modify class table
+    /// Controller allows user to call from and modify class table.
     /// </summary>
     public class ClassesController : BaseController {
 
@@ -115,6 +115,10 @@ namespace EdDbLib {
             public Instructor Instructor { get; set; }
         }
 
+        /// <summary>
+        /// Returns a class as well as the instrructor information for that class.
+        /// </summary>
+        /// <returns> Class and instructor information. </returns>
         public IEnumerable<ClassWithInstructor> GetClassWithInstructor() {
             var insCtrl = new InstructorsController(Connection);
             var classWithInstructor = from c in SelectAll()

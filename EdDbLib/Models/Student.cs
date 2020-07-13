@@ -11,6 +11,7 @@ namespace EdDbLib {
 
         //doesnt allow users to change ID, sets ID to 0 by default
         public int Id { get; private set; } 
+
         public string Firstname {  get; set; }
         public string Lastname { get; set; }
         public string StateCode { get; set; }
@@ -42,8 +43,6 @@ namespace EdDbLib {
                                     "GPA = @GPA, " +
                                     "MajorId = @MajorId" +
                                     "Where Id = @Id;";
-
-
         public const string SelectByPK = "Select * From Student where ID = {Id}";
         public const string SelectAll = "Select * from Student;";
 

@@ -190,7 +190,10 @@ namespace EdDbLib {
             public string Fullname { get; set; }
             public string Major { get; set; }
         }
-
+        /// <summary>
+        /// Allows user to call student with declared major attached.
+        /// </summary>
+        /// <returns> Student with major attached. </returns>
         public IEnumerable<StudentWithMajor> GetStudentWithMajor() {
             var majCtrl = new MajorsController(Connection);
             var studentWithMajor = from s in SelectAll()

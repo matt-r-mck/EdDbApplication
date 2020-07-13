@@ -5,6 +5,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace EdDbLib {
+
+    /// <summary>
+    /// Contains methods to be used by all other controllers.
+    /// </summary>
     public class BaseController {
 
         public Connection Connection { get; protected set; } = null;

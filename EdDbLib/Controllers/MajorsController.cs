@@ -13,14 +13,14 @@ namespace EdDbLib {
     public class MajorsController : BaseController {
 
         /// <summary>
-        /// Establishes a connection for this controller using base controller
+        /// Creates instance of Majors Controller on connection.
         /// </summary>
         /// <param name="connection"></param>
         public MajorsController(Connection connection) : base (connection) {
         }
 
         /// <summary>
-        /// Loads parameters for Major table into major instance
+        /// Loads parameters for Major table into major instance.
         /// </summary>
         /// <param name="reader"> Reader initalized by method called by user. </param>
         /// <returns> A major. </returns>

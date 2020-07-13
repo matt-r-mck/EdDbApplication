@@ -7,9 +7,7 @@ using EdDbLib;
 namespace EdDbApplication {
     class Program {
 
-        public const string LOCALHOST = "localhost";
-        public const string SQLEXPRESS = "sqlexpress";
-        public const string EDDB = "EdDb";
+
 
 
         static void Main() {
@@ -17,7 +15,7 @@ namespace EdDbApplication {
         }
 
         static void TestLinq() {
-            var connection = new Connection(LOCALHOST, SQLEXPRESS, EDDB);
+            var connection = new Connection(Connection.LOCALHOST, Connection.SQLEXPRESS, Connection.EDDB);
             var classCtrl = new ClassesController(connection);
             var results = classCtrl.GetClassWithInstructor();
                 }
